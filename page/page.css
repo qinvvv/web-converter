@@ -1,0 +1,133 @@
+body {
+    font-family: Arial;
+    background-color: rgb(45, 45, 45);
+    overflow: hidden
+}
+
+#levelData {
+    align-items: center;
+    justify-content: center;
+    height: 100%
+}
+
+#diffs {
+    position: fixed;
+    top: 66%
+}
+
+#dragContainer {
+    border: 1px solid gray;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    height: 100%
+}
+
+.offsetWrapper {
+    position: fixed;
+    top: 60%
+}
+
+.mapName {
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 20px;
+    color: white;
+    position: fixed;
+    top: 35%
+}
+
+.pageButton {
+    color: white; 
+    font-size: 20px;
+    font-family: system-ui;
+    height: 50px;
+    width: 100px;
+    margin: 10px;
+    border: 2px;
+    border-radius: 5px;
+    border-color: rgba(0, 0, 0, 0);
+    border-bottom: 3px solid rgba(1,1,1,0.4)
+}
+.osz {
+    background-color:rgb(189 115 188)
+}
+
+.qp {
+    background-color:rgb(54 167 192)
+}
+
+.gpop {
+    background-color: rgb(19 180 146)
+}
+
+.pageButton:active {
+    border-bottom: 0px solid black;
+    height: 47px
+}
+
+.osz:hover {
+    background-color: rgba(189, 115, 188, 0.8)
+}
+
+.qp:hover {
+    background-color: rgba(54, 167, 192, 0.7)
+}
+
+.gpop:hover {
+    background-color: rgba(19, 180, 146, 0.7)
+}
+
+.dragContainerText {
+    color: lightgrey;
+    font-size: 30px
+}
+
+.typetext {
+    font-size: 17px;
+    color: gray
+}
+
+.hide {
+    animation-name: hide;
+    animation-duration: 500ms;
+    animation-fill-mode: forwards
+}
+
+.show {
+    animation-name: show;
+    animation-duration: 500ms;
+    animation-fill-mode: forwards
+}
+
+@keyframes hide {
+    0%
+    {
+      opacity: 1
+    }
+    100%
+    {
+      display: none;
+      opacity: 0;
+      height: 0
+    }
+}
+
+@keyframes show {
+    0%
+    {
+    opacity: 0
+    }
+    50%
+    {
+    opacity: 0.25
+    }
+    100%
+    {
+    opacity: 1
+    }
+}
+  
