@@ -4,6 +4,24 @@ body {
     overflow: hidden
 }
 
+#backButton {
+    position: fixed;
+    top: 5%;
+    left: 2%;
+    border-right: 5px solid rgb(45, 45, 45); 
+    border-bottom: 5px solid rgb(45, 45, 45);
+    height: 40px;
+    width: 40px;
+    border-width: 5px;
+    transform: rotate(-45deg);
+    background-color: rgb(45, 45, 45)
+}
+
+#backButton:hover {
+    border-left: 5px solid rgb(75, 75, 75);
+    border-top: 5px solid rgb(75, 75, 75)
+}
+
 #levelData {
     align-items: center;
     justify-content: center;

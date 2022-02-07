@@ -29,7 +29,7 @@ window.addEventListener('load', function () {
         let read = new FileReader()
 
         let fileTypes1 = ['qp', 'osz']
-        let fileTypes2 = ['gpop']
+        let fileTypes2 = ['gpop', 'osu']
         let ext = ['qua', 'osu']
 
         read.onload = function() {
@@ -70,6 +70,10 @@ window.addEventListener('load', function () {
                 document.getElementById('dragContainer').classList.add('hide')
                 document.getElementById('levelData').style.display = 'flex'
                 document.getElementById('levelData').classList.add('show')
+                document.getElementById('backButton').addEventListener("click", function(event) 
+                { 
+                    window.location.reload();
+                })
 
                 for (let i = 0; i < document.getElementsByClassName('pageButton').length; i++) 
                 {
@@ -96,6 +100,7 @@ window.addEventListener('load', function () {
                         }
                     })
                 }
+                if (fileType == 'osu') {document.querySelector(`#levelData > button.pageButton.osz`).remove()}
                 document.querySelector(`#levelData > button.pageButton.${fileType}`).remove()
             }
             else {
@@ -133,7 +138,7 @@ window.addEventListener('load', function () {
             }
             return [notes, keys]
         }
-        if (fileType == 'osz')
+        if (fileType == 'osz' || fileType == 'osu')
         {
             let notes = []
             let keys = parseInt(data.split('CircleSize:')[1].split('\n')[0])
@@ -307,6 +312,7 @@ SliderTickRate:1
         }
         if (game == 'gpop')
         {
+            offset = offset/1000
             let fileFormat;
 
             keymode == 4 ? fileFormat = '[{"type":"s2","dict":{"a":0,"a1":1,"s":2,"s1":3,"d":4,"d1":5,"f":6,"f1":7}}' : '[{"type":"s2","dict":{"a":0,"a1":1,"s":2,"s1":3,"d":4,"d1":5,"j":6,"j1":7,"k":8,"k1":9,"l":10,"l1":11}}'
