@@ -148,10 +148,11 @@ window.addEventListener('load', function () {
                 try
                 {
                     let noteData = oldNotes[index].replace('\n','').split(',')
-
                     let lane = Math.floor(noteData[0] * keys / 512)
                     let time = noteData[2]
-                    let endTime = noteData[5].length == 8 ? noteData[5].split(':')[0] : '0'
+                    console.log(noteData[5], noteData[5].length, noteData[5].split(':')[0])
+                    let endTime = noteData[5].length == 8 ? '0' : noteData[5].split(':')[0]
+                    console.log(endTime)
                     notes.push(`${lane+1}|${time}|${endTime}`)
                 }
                 catch (er) {console.log(er)}
@@ -263,12 +264,12 @@ TimelineZoom: 1
 [Metadata]
 Title: ${fill}
 TitleUnicode: ${fill}
-Artist: 
-ArtistUnicode: 
-Creator:
+Artist: x
+ArtistUnicode: x
+Creator: x
 Version: 1
-Source: 
-Tags:
+Source: x
+Tags: x
 BeatmapID: ${fill}
 BeatmapSetID: ${fill}
 
@@ -300,12 +301,11 @@ SliderTickRate:1
             {
                 let cnote = notes[index].split('|')
                 let lane = Math.floor(512 * cnote[0] / keymode - 64);
-                cnote[2] == 0 ? fileFormat = fileFormat.concat(`${lane},192,${parseInt(cnote[1])+offset},1,0,0:0:0:0:\n`) : fileFormat = fileFormat.concat(`${lane},192,${parseInt(cnote[2])+offset},128,0,${parseInt(cnote[2])+offset}:0:0:0:0:\n`)
+                cnote[2] == 0 ? fileFormat = fileFormat.concat(`${lane},192,${parseInt(cnote[1])+offset},1,0,0:0:0:0:\n`) : fileFormat = fileFormat.concat(`${lane},192,${parseInt(cnote[1])+offset},128,0,${parseInt(cnote[2])+offset}:0:0:0:0:\n`)
             }
             
             var zip = new JSZip()
             zip.file(`${fill}.osu`, fileFormat)
-            zip.file(`audio.mp3`, '')
             zip.generateAsync({type:"blob"}).then(function (blob) {
              saveAs(blob, `${fill}.osz`)
             });
