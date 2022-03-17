@@ -1,4 +1,5 @@
 window.addEventListener('load', function () {
+    console.log('1.0.0')
     document.getElementById('dragContainer').addEventListener('dragover', function(e) {
         e.stopPropagation()
         e.preventDefault()
@@ -150,9 +151,7 @@ window.addEventListener('load', function () {
                     let noteData = oldNotes[index].replace('\n','').split(',')
                     let lane = Math.floor(noteData[0] * keys / 512)
                     let time = noteData[2]
-                    console.log(noteData[5], noteData[5].length, noteData[5].split(':')[0])
                     let endTime = noteData[5].length == 8 ? '0' : noteData[5].split(':')[0]
-                    console.log(endTime)
                     notes.push(`${lane+1}|${time}|${endTime}`)
                 }
                 catch (er) {console.log(er)}
