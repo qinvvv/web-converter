@@ -1,11 +1,12 @@
 window.addEventListener('load', function () {
-    console.log('1.0.0')
+    console.log('1.0.1')
     document.getElementById('dragContainer').addEventListener('dragover', function(e) {
         e.stopPropagation()
         e.preventDefault()
         document.getElementById('dragContainer').style.border = '1px solid white'
         document.getElementById('dragContainer').style.backgroundColor = 'rgb(63, 63, 63)'
     })
+
 
     document.getElementById('dragContainer').addEventListener('dragleave', function(e) {
         e.stopPropagation()
@@ -321,7 +322,7 @@ SliderTickRate:1
                 let lane = parseInt(cnote[0]) * 2 - 2
                 let noteTime = parseInt(cnote[1])/1000
                 let noteEndTime = parseInt(cnote[2])/1000
-                noteEndTime == 0 ? fileFormat = fileFormat.concat(`,${lane},${noteTime+offset}`) :  fileFormat = fileFormat.concat(`,${lane+1},${noteTime+offset},${noteEndTime-noteTime+offset}`)
+                noteEndTime == 0 ? fileFormat = fileFormat.concat(`,${lane},${noteTime+offset}`) :  fileFormat = fileFormat.concat(`,${lane+1},${noteTime+offset},${noteEndTime-noteTime}`)
             }
             fileFormat = fileFormat.concat(']')
             let f = new Blob([fileFormat], { type: "text/plain;charset=utf-8" })
