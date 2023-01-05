@@ -315,7 +315,7 @@ SliderTickRate:1
             offset = offset/1000
             let fileFormat;
 
-            keymode == 4 ? fileFormat = '[{"type":"s2","dict":{"a":0,"a1":1,"s":2,"s1":3,"d":4,"d1":5,"f":6,"f1":7}}' : '[{"type":"s2","dict":{"a":0,"a1":1,"s":2,"s1":3,"d":4,"d1":5,"j":6,"j1":7,"k":8,"k1":9,"l":10,"l1":11}}'
+            keymode == 4 ? fileFormat = '[{"type":"s2","dict":{"a":0,"a1":1,"s":2,"s1":3,"d":4,"d1":5,"f":6,"f1":7}}' : fileFormat = '[{"type":"s2","dict":{"a":0,"a1":1,"s":2,"s1":3,"d":4,"d1":5,"j":6,"j1":7,"k":8,"k1":9,"l":10,"l1":11}}'
             for (let index = 0; index < notes.length; index++)
             {
                 let cnote = notes[index].split('|')
