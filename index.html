@@ -8,12 +8,16 @@
     <div id="dragContainer">
         <div class="dragContainerText">
             <p>Drag your file here</p>
-            <p class="typetext"><small>supported file types: .osz, .osu, .qp, .gpop</small></p>
+            <p class="typetext"><small>supported file types: .osz, .osu, .qp, .gpop, .sm</small></p>
         </div>
     </div>
     <div id="levelData" style="display: none">
         <div class='offsetWrapper'>
             <input type="number" id="offset" placeholder="offset (milliseconds)">
+            <div class='tooltip'>
+                <span class="tooltiptext">Recommended to leave blank when converting .sm files, as they already contain an offset inside the file</span>
+                <img class="tooltip" src="https://northern.net/wp-content/uploads/2019/09/css-box-icon-info.png" height="21", width="21">
+            </div>
         </div>
         <div>
             <button type="button" id="backButton"></button>
@@ -23,5 +27,6 @@
         <button type="button" class="pageButton qp">Quaver</button>
         <button type="button" class="pageButton osz">osu!</button>
         <button type="button" class="pageButton gpop">Gpop</button>
+        <button type="button" class="pageButton sm">Stepmania</button>
     </div>
 </body>

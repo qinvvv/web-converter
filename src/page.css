@@ -8,7 +8,7 @@ body {
     position: fixed;
     top: 5%;
     left: 2%;
-    border-right: 5px solid rgb(45, 45, 45); 
+    border-right: 5px solid rgb(45, 45, 45);
     border-bottom: 5px solid rgb(45, 45, 45);
     height: 40px;
     width: 40px;
@@ -44,6 +44,7 @@ body {
 }
 
 .offsetWrapper {
+    display: flex;
     position: fixed;
     top: 60%
 }
@@ -59,7 +60,7 @@ body {
 }
 
 .pageButton {
-    color: white; 
+    color: white;
     font-size: 20px;
     font-family: system-ui;
     height: 50px;
@@ -68,18 +69,23 @@ body {
     border: 2px;
     border-radius: 5px;
     border-color: rgba(0, 0, 0, 0);
-    border-bottom: 3px solid rgba(1,1,1,0.4)
+    border-bottom: 3px solid rgba(1, 1, 1, 0.4)
 }
+
 .osz {
-    background-color:rgb(189 115 188)
+    background-color: rgb(189 115 188)
 }
 
 .qp {
-    background-color:rgb(54 167 192)
+    background-color: rgb(54 167 192)
 }
 
 .gpop {
     background-color: rgb(19 180 146)
+}
+
+.sm {
+    background-color: rgb(75, 20, 56)
 }
 
 .pageButton:active {
@@ -98,6 +104,11 @@ body {
 .gpop:hover {
     background-color: rgba(19, 180, 146, 0.7)
 }
+
+.sm:hover {
+    background-color: rgba(75, 20, 56, 0.7)
+}
+
 
 .dragContainerText {
     color: lightgrey;
@@ -121,31 +132,68 @@ body {
     animation-fill-mode: forwards
 }
 
+.tooltip {
+    margin-left: 1px;
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    font-size: 10px;
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
 @keyframes hide {
-    0%
-    {
-      opacity: 1
+    0% {
+        opacity: 1
     }
-    100%
-    {
-      display: none;
-      opacity: 0;
-      height: 0
+
+    100% {
+        display: none;
+        opacity: 0;
+        height: 0
     }
 }
 
 @keyframes show {
-    0%
-    {
-    opacity: 0
+    0% {
+        opacity: 0
     }
-    50%
-    {
-    opacity: 0.25
+
+    50% {
+        opacity: 0.25
     }
-    100%
-    {
-    opacity: 1
+
+    100% {
+        opacity: 1
     }
 }
-  

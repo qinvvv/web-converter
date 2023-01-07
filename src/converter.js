@@ -1,5 +1,4 @@
 window.addEventListener('load', function () {
-    console.log('1.0.1')
     document.getElementById('dragContainer').addEventListener('dragover', function(e) {
         e.stopPropagation()
         e.preventDefault()
@@ -23,7 +22,7 @@ window.addEventListener('load', function () {
         let mapName = oldFile.name
         let fileType = oldFile.name.split('.').pop()
         let file = fileType == 'osz' || 'qp' ? new File([oldFile], "file.zip") : e.dataTransfer.files[0]
-        let nameDiv = document.createElement('div');
+        let nameDiv = document.createElement('div')
         nameDiv.textContent = mapName
         nameDiv.setAttribute('class', 'mapName')
         document.getElementById('levelData').append(nameDiv)
@@ -32,24 +31,18 @@ window.addEventListener('load', function () {
 
         let fileTypes1 = ['qp', 'osz']
         let fileTypes2 = ['gpop', 'osu']
+        let fileTypes3 = ['sm']
         let ext = ['qua', 'osu']
 
         read.onload = function() {
-            if (fileTypes1.concat(fileTypes2).includes(fileType))
+            if (fileTypes1.concat(fileTypes2).concat(fileTypes3).includes(fileType))
             {
-                if (fileTypes2.includes(fileType)) 
-                {
-                    let mapData = read.result
-                    var h = cv(mapData, fileType)
-                    var notes = h[0]
-                    var keymode = h[1]
-                }
-                else
+                if (fileTypes1.includes(fileType)) 
                 {
                     var zip = new JSZip()
                     zip.loadAsync(file).then(function(f) 
                     {
-                        let diffs = document.createElement('select');
+                        let diffs = document.createElement('select')
                         diffs.setAttribute('id', 'diffs')
                         document.getElementById('levelData').append(diffs)
 
@@ -59,14 +52,52 @@ window.addEventListener('load', function () {
                          let u = map.split('.').pop()
                          if (ext.includes(u)) 
                          {
-                            let mapdiff = document.createElement('option');
+                            let mapdiff = document.createElement('option')
                             mapdiff.setAttribute('value', diffAmount)
-                            mapdiff.textContent = map;
+                            mapdiff.textContent = map
                             diffs.appendChild(mapdiff)
                             diffAmount++
                          }
                         }
                     })
+                }
+                if (fileTypes2.includes(fileType)) 
+                {
+                    let mapData = read.result
+                    var h = cv(mapData, fileType)
+                    var notes = h[0]
+                    var keymode = h[1]
+                }
+                if (fileType == 'sm') 
+                {
+                    let mapData = read.result
+                    let mapDiffs = mapData.split('#NOTES:')
+
+                    let diffs = document.createElement('select')
+                    let diffAmount = 1
+                    diffs.setAttribute('id', 'diffs')
+                    document.getElementById('levelData').append(diffs)
+
+
+                    for (let map in mapDiffs)
+                    {
+                        if (map != 0) 
+                        {
+                            let mapdiff = document.createElement('option')
+                            mapdiff.setAttribute('value', diffAmount)
+                            try
+                            {
+                                mapdiff.textContent = mapDiffs[map].split('\r\n')[3].slice(0,-1)
+                            }
+                            catch (e) 
+                            {
+                                mapdiff.textContent = mapDiffs[map].split('\n')[3].slice(0,-1)
+                            }
+                            diffs.appendChild(mapdiff)
+                            diffAmount++
+                        }
+                    }
+
                 }
 
                 document.getElementById('dragContainer').classList.add('hide')
@@ -74,18 +105,14 @@ window.addEventListener('load', function () {
                 document.getElementById('levelData').classList.add('show')
                 document.getElementById('backButton').addEventListener("click", function(event) 
                 { 
-                    window.location.reload();
+                    window.location.reload()
                 })
 
                 for (let i = 0; i < document.getElementsByClassName('pageButton').length; i++) 
                 {
                     document.getElementsByClassName('pageButton')[i].addEventListener("click", function(event) 
                     { 
-                        if (fileTypes2.includes(fileType)) 
-                        {
-                            cv2(event.target.classList[1], notes, document.getElementById('offset').value, keymode) 
-                        }
-                        else 
+                        if (fileTypes1.includes(fileType)) 
                         {
                             zip.loadAsync(file).then(function(f) 
                             {
@@ -100,10 +127,41 @@ window.addEventListener('load', function () {
                                 })
                             })
                         }
+
+                        if (fileTypes2.includes(fileType)) 
+                        {
+                            cv2(event.target.classList[1], notes, document.getElementById('offset').value, keymode) 
+                        }
+
+                        if (fileTypes3.includes(fileType))
+                        {
+                            let selectedDifficulty = document.getElementById('diffs').options[document.getElementById('diffs').selectedIndex].text
+                            let rawMapData = read.result
+                            let BPM = 0
+                            let offset = -(rawMapData.split('#OFFSET:')[1].split(';')[0]) + document.getElementById('offset').value
+                            try {
+                                BPM = rawMapData.split('#DISPLAYBPM:')[1].split(';')[0]
+                            }
+                            catch (e)
+                            {
+                                BPM = rawMapData.split('0=')[1].split(';')[0]
+                            }
+                            let mapData = BPM+rawMapData.split(selectedDifficulty)[1]
+                            let h = cv(mapData, fileType)
+                            let notes = h[0]
+                            let keymode = h[1]
+                            keymode != 4 && keymode != 6 && event.target.classList[1] == 'gpop' ? alert(`Gpop does not support keymodes other than 4k and 6k!\nMap keymode: ${keymode}`) : '' 
+                            keymode != 4 && keymode != 7 && event.target.classList[1] == 'qp' ? alert(`Quaver does not support keymodes other than 4k and 7k!\nMap keymode: ${keymode}`) : '' 
+                            cv2(event.target.classList[1], notes, offset, keymode)
+                        }
                     })
                 }
-                if (fileType == 'osu') {document.querySelector(`#levelData > button.pageButton.osz`).remove()}
-                document.querySelector(`#levelData > button.pageButton.${fileType}`).remove()
+                if (fileType == 'osu') { document.querySelector(`#levelData > button.pageButton.osz`).remove() }
+                try 
+                { 
+                    document.querySelector(`#levelData > button.pageButton.sm`).remove()
+                    document.querySelector(`#levelData > button.pageButton.${fileType}`).remove()
+                } catch (e) {}
             }
             else {
                 alert('Invalid file type')
@@ -115,8 +173,56 @@ window.addEventListener('load', function () {
         document.getElementById('dragContainer').style.backgroundColor = 'rgb(45, 45, 45)'
     })
 
+    //note format: lane|time|endTime - if no endtime, endtime = 0
     function cv(data, fileType) 
     {
+        if (fileType == 'sm') {
+            let notes = []
+            bpm = +(data.split(':')[0])
+            measures = data.split(':')[3].split(',')
+            for (index in measures) //which measure
+            {
+
+                let measureNotes = []
+                measureNotes = measures[index].split('\r\n')
+                if (measureNotes.length == 1) 
+                {
+                    measureNotes = measures[index].split('\n')
+                }
+
+                measureNotes = measureNotes.filter(snap => snap.length == 4)
+                let measureSnap = (measureNotes.length)/4
+
+                for (line in measureNotes) //which line
+                {
+                    let measureLines = measureNotes[line]
+
+                    for (note in measureLines)
+                    {
+                        let lane = +note+1
+
+                        if (measureLines[note] == '1' || measureLines[note] == '2')
+                        {
+                            let time = 0
+                            let currentMeasureTime = ((60/bpm) / measureSnap) * (+line) 
+
+                            if (index == 0) 
+                            {
+                                time = currentMeasureTime 
+                            } 
+                            else 
+                            {
+                                time = (60/bpm) * (index*4) + currentMeasureTime
+                            }
+
+                            //console.log(`lane:${lane}, note: ${measureLines[note]}, line: ${+line+1}, time: ${time}`)
+                            notes.push(`${lane}|${parseInt(time.toFixed(3).replace('.',''),10)}|0`)
+                        }
+                    }
+                }  
+            }
+            return [notes, 4]
+        }
         if (fileType == 'qp')
         {
             let notes = []
@@ -130,13 +236,13 @@ window.addEventListener('load', function () {
 
                     if (note.startsWith('- StartTime: ') == true)
                     {
-                        let endTime;
+                        let endTime
                         let time = parseInt(note.split('- StartTime: ')[1].split('\n')[0])
                         let lane = parseInt(oldNotes[index+1].trim().split('Lane: ')[1].split('\n')[0])
                         oldNotes[index+2].trim().startsWith('EndTime: ') == true ? endTime = parseInt(oldNotes[index+2].trim().split('EndTime: ')[1].split('\n')[0]) : endTime = 0
                         notes.push(`${lane}|${time}|${endTime}`)
                     } 
-                } catch (er) {console.log(er)}
+                } catch (e) {}
             }
             return [notes, keys]
         }
@@ -155,14 +261,14 @@ window.addEventListener('load', function () {
                     let endTime = noteData[5].length == 8 ? '0' : noteData[5].split(':')[0]
                     notes.push(`${lane+1}|${time}|${endTime}`)
                 }
-                catch (er) {console.log(er)}
+                catch (e) {}
             }
             return [notes, keys]
         }
 
         if (fileType == 'gpop') 
         {
-            let keys;
+            let keys
             data.toString().indexOf(':11}},') !== -1 ? keys = 6 : keys = 4 
             let notes = []
             let oldNotes = data.replace(']', '').split('}},')[1].split(',')
@@ -195,7 +301,7 @@ window.addEventListener('load', function () {
                 }
                 catch (er) {}
             }
-            return [notes, keys];
+            return [notes, keys]
         }
     }
     function cv2(game, notes, offset, keymode) 
@@ -300,7 +406,7 @@ SliderTickRate:1
             for (let index = 0; index < notes.length; index++)
             {
                 let cnote = notes[index].split('|')
-                let lane = Math.floor(512 * cnote[0] / keymode - 64);
+                let lane = Math.floor(512 * cnote[0] / keymode - 64)
                 cnote[2] == 0 ? fileFormat = fileFormat.concat(`${lane},192,${parseInt(cnote[1])+offset},1,0,0:0:0:0:\n`) : fileFormat = fileFormat.concat(`${lane},192,${parseInt(cnote[1])+offset},128,0,${parseInt(cnote[2])+offset}:0:0:0:0:\n`)
             }
             
@@ -308,12 +414,12 @@ SliderTickRate:1
             zip.file(`${fill}.osu`, fileFormat)
             zip.generateAsync({type:"blob"}).then(function (blob) {
              saveAs(blob, `${fill}.osz`)
-            });
+            })
         }
         if (game == 'gpop')
         {
             offset = offset/1000
-            let fileFormat;
+            let fileFormat
             keymode == 4 ? fileFormat = '[{"type":"s2","dict":{"a":0,"a1":1,"s":2,"s1":3,"d":4,"d1":5,"f":6,"f1":7}}' : fileFormat = '[{"type":"s2","dict":{"a":0,"a1":1,"s":2,"s1":3,"d":4,"d1":5,"j":6,"j1":7,"k":8,"k1":9,"l":10,"l1":11}}'
             for (let index = 0; index < notes.length; index++)
             {
