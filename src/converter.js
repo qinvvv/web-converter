@@ -1,5 +1,4 @@
 window.addEventListener('load', function () {
-    console.log('1.0.1')
     document.getElementById('dragContainer').addEventListener('dragover', function(e) {
         e.stopPropagation()
         e.preventDefault()
@@ -31,8 +30,8 @@ window.addEventListener('load', function () {
         let read = new FileReader()
 
         let fileTypes1 = ['qp', 'osz']
-        let fileTypes2 = ['gpop', 'osu']
-        let ext = ['qua', 'osu']
+        let fileTypes2 = ['gpop', 'osu', 'ryp']
+        let ext = ['qua', 'osu', 'ryp']
 
         read.onload = function() {
             if (fileTypes1.concat(fileTypes2).includes(fileType))
@@ -95,7 +94,8 @@ window.addEventListener('load', function () {
                                     let notes = h[0]
                                     let keymode = h[1]
                                     keymode != 4 && keymode != 6 && event.target.classList[1] == 'gpop' ? alert(`Gpop does not support keymodes other than 4k and 6k!\nMap keymode: ${keymode}`) : '' 
-                                    keymode != 4 && keymode != 7 && event.target.classList[1] == 'qp' ? alert(`Quaver does not support keymodes other than 4k and 7k!\nMap keymode: ${keymode}`) : '' 
+                                    keymode != 4 && keymode != 7 && event.target.classList[1] == 'qp' ? alert(`Quaver does not support keymodes other than 4k and 7k!\nMap keymode: ${keymode}`) : ''
+                                    keymode != 4 && keymode != 5 && keymode != 6 && keymode != 7 && keymode != 8 && event.target.classList[1] == 'ryp' ? alert(`Rhythm+ does not support keymodes other than 4-8k!\nMap keymode: ${keymode}`) : '' 
                                     cv2(event.target.classList[1], notes, document.getElementById('offset').value, keymode) 
                                 })
                             })
@@ -197,10 +197,181 @@ window.addEventListener('load', function () {
             }
             return [notes, keys];
         }
+        if (fileType == 'ryp')
+        {
+            data = JSON.parse(data)
+            let laneList = {
+                8: {
+                    'a': '1',
+                    's': '2',
+                    'd': '3',
+                    'f': '4',
+                    'j': '5',
+                    'k': '6',
+                    'l': '7',
+                    ';': '8'
+                },
+                7: {
+                    's': '1',
+                    'd': '2',
+                    'f': '3',
+                    ' ': '4',
+                    'j': '5',
+                    'k': '6',
+                    'l': '7'
+                },
+                6: {
+                    's': '1',
+                    'd': '2',
+                    'f': '3',
+                    'j': '4',
+                    'k': '5',
+                    'l': '6'
+                },
+                5: {
+                    'd': '1',
+                    'f': '2',
+                    ' ': '3',
+                    'j': '4',
+                    'k': '5'
+                },
+                4: {
+                    'd': '1',
+                    'f': '2',
+                    'j': '3',
+                    'k': '4'
+                }
+            }
+            
+            let notes = []
+            let keys = data.keys
+
+            for (let index = 0; index < data.mappings.length-1; index++) { 
+                
+                let time = data.mappings[index].t
+
+                for (let keyindex = 0; keyindex < data.mappings[index].k.length; keyindex++) {
+                        let currentKey = data.mappings[index].k[keyindex] 
+                        let lane = laneList[keys][currentKey]
+                        let endTime = data.mappings[index]?.h?.[currentKey] !== undefined ? data.mappings[index].h[currentKey] : 0
+                        notes.push(`${lane}|${parseInt(parseFloat(time).toFixed(3).replace('.',''),10)}|${parseInt(parseFloat(endTime).toFixed(3).replace('.',''),10)}`)
+                }
+            } 
+            return [notes, keys]
+        }
     }
     function cv2(game, notes, offset, keymode) 
     {
         offset == '' ? offset = 0 : offset = parseInt(offset)
+
+        if (game == 'ryp')
+        {
+            let laneList = {
+                8: {
+                    '1': 'a',
+                    '2': 's',
+                    '3': 'd',
+                    '4': 'f',
+                    '5': 'j',
+                    '6': 'k',
+                    '7': 'l',
+                    '8': ';'
+                },
+                7: {
+                    '1': 's',
+                    '2': 'd',
+                    '3': 'f',
+                    '4': ' ',
+                    '5': 'j',
+                    '6': 'k',
+                    '7': 'l'
+                },
+                6: {
+                    '1': 's',
+                    '2': 'd',
+                    '3': 'f',
+                    '4': 'j',
+                    '5': 'k',
+                    '6': 'l'
+                },
+                5: {
+                    '1': 'd',
+                    '2': 'f',
+                    '3': ' ',
+                    '4': 'j',
+                    '5': 'k'
+                },
+                4: {
+                    '1': 'd',
+                    '2': 'f',
+                    '3': 'j',
+                    '4': 'k'
+                }
+            }
+
+            let mappings = []
+            let finishedNote
+            
+            notes.forEach((note, index) => {
+                let [lane, startTime, endTime] = note.split('|');
+                lane = laneList[keymode][lane];
+                startTime = (parseInt(startTime, 10) / 1000).toFixed(3);
+                endTime = (parseInt(endTime, 10) / 1000).toFixed(3);
+        
+                if (index === 0 || mappings.length === 0 || mappings[mappings.length - 1].t !== startTime) {
+                    if (endTime == 0) {
+                        finishedNote = {
+                            "t": startTime,
+                            "k": lane
+                        };
+                    } else {
+                        finishedNote = {
+                            "t": startTime,
+                            "k": lane,
+                            "h": { 
+                                [lane]: endTime
+                            }
+                        };
+                    }
+                    mappings.push(finishedNote)
+                } else {
+                    let lastNote = mappings[mappings.length - 1];
+                    if (endTime == 0) {
+                        lastNote["k"] += lane
+                    } else {
+                        lastNote["k"] += lane
+
+                        if (!lastNote.hasOwnProperty("h")) {
+                            lastNote["h"] = {}
+                        }
+
+                        lastNote["h"][lane] = endTime
+                    }
+                }
+                
+            })
+            
+            
+
+            let fileFormatJson = {
+                "version": 1,
+                "title": "",
+                "startAt": null,
+                "endAt": null,
+                "keys": keymode,
+                "difficulty": 1,
+                "length": 0,
+                "noteCount": mappings.length,
+                "visualizerName": "",
+                "clonedFrom": "",
+                "mappings": mappings
+            }
+
+            let fileFormat = JSON.stringify(fileFormatJson)
+            let f = new Blob([fileFormat], { type: "text/plain;charset=utf-8" })
+            saveAs(f, "map.ryp")
+        }
+
         if (game == 'qp')
         {
              let fill = Math.floor(Math.random() * 100000000)
